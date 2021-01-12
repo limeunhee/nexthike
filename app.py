@@ -66,56 +66,30 @@ def index():
 
 
 
-# Where you ask user to search for trail they liked
-@app.route('/input_form')
-def input_form():
-    return '''
-        <form action="/trail_search_result" target="_blank" method='POST'>
-            <input type="text" name="user_input" />
-            <input type="submit"/>
-        </form>
-        '''
 
 # Where you return list of trails that contains the string user searched for
 @app.route('/trail_search_result', methods=['GET','POST'])
 def trail_search_result():
     text = str(request.form['user_input'])
     output = df[(df['name'].str.contains(text, case=False)) |
-                 (df['location'].str.contains(text, case=False))].loc[:,['name', 'location','distance']].to_html()
-    return f'{output}'
+                 (df['location'].str.contains(text, case=False))].loc[:,['name', 'location','distance']]
+    return render_template("trail_form.html", output=output)
 
 
-@app.route('/recommendations', methods=['GET', 'POST'])
-def recommendations():
+@app.route('/recommendations/<index_val>', methods=['GET', 'POST'])
+def recommendations(index_val):
     order = ['name', 'location', 'stars','distance','elevation','duration','difficulty'] #,'short_description']
     
-    user_input = str(request.form['user_input_idx'])
-    if len(user_input) == 0:
-        return redirect('/')
-
-    user_input = user_input.split(',')
-    if len(user_input) == 1:
-        user_input = int(user_input[0])
-        user_trail = df[df.index==user_input]
-        user_trail = user_trail[order]
-        
-        pop_output = top_10.loc[:,order]
-        
-        hybrid_output = get_recommendations_by_hybrid_sim(user_input,10)
-        hybrid_output = hybrid_output[order]
-    else:
-        return "more than 1 argument"
+    user_input = int(index_val)
+    user_trail = df[df.index==user_input]
+    user_trail = user_trail[order]
     
-
-        
+    pop_output = top_10.loc[:,order]
     
-    
+    hybrid_output = get_recommendations_by_hybrid_sim(user_input,10)
+    hybrid_output = hybrid_output[order]
 
-    return f'''The trail you chose: {user_trail.to_html()} 
-             Top 10 trails in CA: {pop_output.to_html()} 
-             Trails similar to yours: {hybrid_output.to_html()}
-             Hikers similar to you also liked: 
-            '''
+    return render_template('recommendations.html', user_trail = user_trail, pop_output=pop_output, hybrid_output = hybrid_output )
 
        
                # Trails liked by other hikers who also liked 'user_input' <br>  
