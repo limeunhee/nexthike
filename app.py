@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, jsonify, redirect
 import pandas as pd
 import numpy as np
+from scipy import sparse
+import pickle5 as pickle
 
+## For CB model
 def weighted_star_rating(x):
     v = x['review_count']
     R = x['stars']
@@ -53,18 +56,64 @@ def get_recommendations_by_hybrid_sim(idx, top_n=5):
     result = df.iloc[trail_indices]
     return result
 
+order = ['name', 'location', 'stars','distance','elevation','duration','difficulty']
+
+## CF model
+
+trail_indices = pd.read_csv('data/knn_trail_indices.csv')
+small_df = pd.read_csv('data/small_df.csv')
+
+filename = 'data/knn_recommendations.pickle'
+with open(filename, 'rb') as handle:
+    CF_model = pickle.load(handle)
+ 
+
 app = Flask(__name__)
 
 # home page
 @app.route('/', methods=['GET','POST'])
 def index():
 
-    pop_output = top_10.loc[:,['name', 'difficulty','location','stars','review_count']]
-    hybrid_output = get_recommendations_by_hybrid_sim(0,5)
-
     return render_template("index.html")
 
 
+# Where you return list of trails that contains the string user searched for
+@app.route('/CF_input', methods=['GET','POST'])
+def CF_input():
+    cols = ['trail', 'location', 'distance', 'difficulty', 'trail_url']
+    samples = trail_indices.sample(25)[cols]
+
+    return render_template('CF_input_form.html', samples = samples)
+
+# Where you return list of trails that contains the string user searched for
+@app.route('/CF_rec', methods=['GET','POST'])
+def CF_rec():
+    new_user_ratings = request.form.getlist("trail_index")
+
+    #if len(new_user_ratings) ==0:
+        
+    A = [10000 for i in new_user_ratings] ## new user id
+    B= [int(i) for i in new_user_ratings ] ## trail id
+    C = [5 for i in new_user_ratings] ## rating value
+
+    d = {'user_id':A, 'trail_id':B, 'stars':C}
+    df_new = pd.DataFrame(data=d)
+    new_small_df = small_df.append(df_new)
+
+    sparse_mat = sparse.csr_matrix((new_small_df.stars, (new_small_df.user_id, new_small_df.trail_id,)))
+    A= (sparse_mat * sparse_mat.T)[-1,:].todense()
+    A = np.asarray(A).reshape(-1)
+    temp = sorted(A, reverse=True)
+
+    result = np.where(A == temp[1])[0][0]
+
+    old_user_rec = [i[0] for i in CF_model[result]]
+    new_user_rec = [x for x in old_user_rec if x not in B]
+
+    new_user_top_5 = new_user_rec[:5]
+    pop_output = top_10.loc[:,order]
+
+    return render_template("CF_rec.html" , output = trail_indices.iloc[new_user_top_5], new_user_ratings  = trail_indices.iloc[B], pop_output = pop_output)
 
 
 # Where you return list of trails that contains the string user searched for
@@ -78,8 +127,7 @@ def trail_search_result():
 
 @app.route('/recommendations/<index_val>', methods=['GET', 'POST'])
 def recommendations(index_val):
-    order = ['name', 'location', 'stars','distance','elevation','duration','difficulty'] #,'short_description']
-    
+
     user_input = int(index_val)
     user_trail = df[df.index==user_input]
     user_trail = user_trail[order]

@@ -1,0 +1,40 @@
+<script src="{{url_for('static', filename='js/jquery-3.5.1.min.js')}}"></script>
+
+
+<h1 class="title">Pick 3-5 trails you liked (or you would like)</h1>
+<h2 class="title">Click on the trail title to see detailed trail info</h1>
+
+<form action="/CF_rec" method="post" name="movie_list">
+    <table class="table is-striped is-fullwidth">
+    {% for i, row in samples.iterrows() %}
+    <tr>
+        <td>
+        <label class="checkbox">
+            <input type="checkbox" name="trail_index" value="{{ i }}"/>
+        </label>
+        <a href="{{ 'https://' + row.trail_url }}" target="_blank">
+            {{ row.trail }}
+        </a>
+        </td>
+        <td>{{row.location}} </td>
+        <td>{{row.distance}}</td>
+        <td>{{row.difficulty}}</td>
+    </tr>
+    {% endfor %}
+    </table>
+
+    <div class="field is-grouped">
+    <div class="control">
+        <button class="button is-danger is-large" id="btncheck" disabled>Get recommendations! </button>
+    </div>
+    </div>
+</form>
+
+<script>
+    var checkboxes = $("input[type='checkbox']"),
+    submitButt = $("#btncheck");
+
+    checkboxes.click(function() {
+        submitButt.attr("disabled", !checkboxes.is(":checked"));
+    });
+</script>

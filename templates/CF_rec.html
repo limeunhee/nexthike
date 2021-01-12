@@ -46,25 +46,23 @@
         <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Average<br>Rating</td>
         <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Distance<br>(mi)</td>
         <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Elevation<br>(ft)</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Duration<br>(min)</td>
         <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Difficulty<br>(1-3)</td>
 
     </tr>
-    {% for i, row in user_trail.iterrows() %}
+    {% for i, row in new_user_ratings.iterrows() %}
     <tr>
-        <td>{{ row["name"] }}</td>
+        <td>{{ row.trail }}</td>
         <td>{{ row.location }}</td>
-        <td style="text-align: center;">{{ row.stars }}</td>
+        <td style="text-align: center;">{{ row.trail_avg_star }}</td>
         <td style="text-align: center;">{{ row.distance }}</td>
         <td style="text-align: center;">{{ row.elevation }}</td>
-        <td style="text-align: center;">{{ row.duration }}</td>
         <td style="text-align: center;">{{ row.difficulty }}</td>
     </tr>
     {% endfor %}
 </table>
 
 
-<h2 style = "margin-top: 50px">Trails similar to trail yours:</h2>
+<h2 style = "margin-top: 50px">Users similar to you also liked:</h2>
 
 <table>
     <tr>
@@ -73,18 +71,16 @@
         <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Average<br>Rating</td>
         <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Distance<br>(mi)</td>
         <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Elevation<br>(ft)</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Duration<br>(min)</td>
         <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Difficulty<br>(1-3)</td>
 
     </tr>
-    {% for i, row in hybrid_output.iterrows() %}
+    {% for i, row in output.iterrows() %}
     <tr>
-        <td>{{ row["name"] }}</td>
+        <td>{{ row.trail }}</td>
         <td>{{ row.location }}</td>
-        <td style="text-align: center;">{{ row.stars }}</td>
+        <td style="text-align: center;">{{ row.trail_avg_star }}</td>
         <td style="text-align: center;">{{ row.distance }}</td>
         <td style="text-align: center;">{{ row.elevation }}</td>
-        <td style="text-align: center;">{{ row.duration }}</td>
         <td style="text-align: center;">{{ row.difficulty }}</td>
     </tr>
     {% endfor %}
@@ -99,7 +95,6 @@
         <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Average<br>Rating</td>
         <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Distance<br>(mi)</td>
         <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Elevation<br>(ft)</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Duration<br>(min)</td>
         <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Difficulty<br>(1-3)</td>
 
     </tr>
@@ -110,7 +105,6 @@
         <td style="text-align: center;">{{ row.stars }}</td>
         <td style="text-align: center;">{{ row.distance }}</td>
         <td style="text-align: center;">{{ row.elevation }}</td>
-        <td style="text-align: center;">{{ row.duration }}</td>
         <td style="text-align: center;">{{ row.difficulty }}</td>
     </tr>
     {% endfor %}
