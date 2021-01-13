@@ -1,5 +1,10 @@
+<head>
+    <title>Trail Recommendations</title>
+</head>
+
 <link rel="preconnect" href="https://fonts.gstatic.com"> 
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/materialize.min.css') }}">
 
 <style>
     body {
@@ -10,19 +15,14 @@
         text-align: center;
     }
 
-    h2 {
+    h3 {
         text-align: center;
     }
 
     table {
-    border-collapse: collapse;
     margin-left: 5%;
     margin-right: 5%;
     width: 90%;
-    }
-
-    tr:nth-child(odd) {
-    background-color: aliceblue;
     }
     
     td {
@@ -34,22 +34,25 @@
     color: gray;
     font-weight: 600;
     }
+
 </style>
 
 <h1 style="margin-bottom: 0">Recommendations</h1>
-<h2 style="margin-top: 50px">Your trail:</h2>
+<h3 style="margin-top: 50px">Your trail:</h3>
 
-<table>
-    <tr>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 45%; text-align: center;" >Name</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 17.5%; text-align: center;">Location</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Average<br>Rating</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Distance<br>(mi)</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Elevation<br>(ft)</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Duration<br>(min)</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Difficulty<br>(1-3)</td>
-
-    </tr>
+<table class="highlight">
+    <thead>
+        <tr>
+            <td style="font-weight: 600; padding-bottom: 5px; width: 45%; text-align: center;" >Name</td>
+            <td style="font-weight: 600; padding-bottom: 5px; width: 17.5%; text-align: center;">Location</td>
+            <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Average<br>Rating</td>
+            <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Distance<br>(mi)</td>
+            <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Elevation<br>(ft)</td>
+            <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Duration<br>(min)</td>
+            <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Difficulty<br>(1-3)</td>
+        </tr>
+    </thead>
+    <tbody>
     {% for i, row in user_trail.iterrows() %}
     <tr>
         <td>{{ row["name"] }}</td>
@@ -61,57 +64,114 @@
         <td style="text-align: center;">{{ row.difficulty }}</td>
     </tr>
     {% endfor %}
+    </tbody>
 </table>
 
 
-<h2 style = "margin-top: 50px">Trails similar to trail yours:</h2>
+<h3 style = "margin-top: 50px">Trails similar to trail yours:</h3>
 
-<table>
-    <tr>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 45%; text-align: center;" >Name</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 17.5%; text-align: center;">Location</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Average<br>Rating</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Distance<br>(mi)</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Elevation<br>(ft)</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Duration<br>(min)</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Difficulty<br>(1-3)</td>
-
-    </tr>
-    {% for i, row in hybrid_output.iterrows() %}
-    <tr>
-        <td>{{ row["name"] }}</td>
-        <td>{{ row.location }}</td>
-        <td style="text-align: center;">{{ row.stars }}</td>
-        <td style="text-align: center;">{{ row.distance }}</td>
-        <td style="text-align: center;">{{ row.elevation }}</td>
-        <td style="text-align: center;">{{ row.duration }}</td>
-        <td style="text-align: center;">{{ row.difficulty }}</td>
-    </tr>
+<div class="row">
+    {% for i, row in hybrid_output.iloc[:5].iterrows() %}
+        <div class="col s2 push-s1">
+            <div class="card z-depth-2 green lighten-4 hoverable" style="border-radius: 10px;">
+                <div class="card-content">
+                    <span class="card-title" style="text-align: center;">{{ row["name"] }}</span>
+                    <p style="text-align: center;">
+                        {{ row.location }}<br><br>
+                        {{ row.stars }} ⭐<br>
+                        {{ row.distance }} miles<br>
+                        {{ row.elevation }} ft gained<br>
+                        {{ row.duration }} minutes<br>
+                        {% if row.difficulty == 1 %}
+                        Easy
+                        {% elif row.difficulty == 2 %}
+                        Moderate
+                        {% else %}
+                        Hard
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
     {% endfor %}
-</table>
+</div>
 
-<h2 style = "margin-top: 50px">Also checkout top 10 trails in CA!</h2>
-
-<table>
-    <tr>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 45%; text-align: center;" >Name</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 17.5%; text-align: center;">Location</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Average<br>Rating</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Distance<br>(mi)</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Elevation<br>(ft)</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Duration<br>(min)</td>
-        <td style="font-weight: 600; padding-bottom: 5px; width: 7.5%; text-align: center;">Difficulty<br>(1-3)</td>
-
-    </tr>
-    {% for i, row in pop_output.iterrows() %}
-    <tr>
-        <td>{{ row["name"] }}</td>
-        <td>{{ row.location }}</td>
-        <td style="text-align: center;">{{ row.stars }}</td>
-        <td style="text-align: center;">{{ row.distance }}</td>
-        <td style="text-align: center;">{{ row.elevation }}</td>
-        <td style="text-align: center;">{{ row.duration }}</td>
-        <td style="text-align: center;">{{ row.difficulty }}</td>
-    </tr>
+<div class="row">
+    {% for i, row in hybrid_output.iloc[5:10].iterrows() %}
+    <div class="col s2 push-s1">
+        <div class="card z-depth-2 green lighten-4 hoverable" style="border-radius: 10px;">
+            <div class="card-content">
+                <span class="card-title" style="text-align: center;">{{ row["name"] }}</span>
+                <p style="text-align: center;">
+                    {{ row.location }}<br><br>
+                    {{ row.stars }} ⭐<br>
+                    {{ row.distance }} miles<br>
+                    {{ row.elevation }} ft gained<br>
+                    {{ row.duration }} minutes<br>
+                    {% if row.difficulty == 1 %}
+                    Easy
+                    {% elif row.difficulty == 2 %}
+                    Moderate
+                    {% else %}
+                    Hard
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
     {% endfor %}
-</table>
+</div>
+
+<h3 style = "margin-top: 50px">Also checkout top 10 trails in CA!</h3>
+
+<div class="row">
+    {% for i, row in pop_output.iloc[:5].iterrows() %}
+    <div class="col s2 push-s1">
+        <div class="card z-depth-2 lime lighten-4 hoverable" style="border-radius: 10px;">
+            <div class="card-content">
+                <span class="card-title" style="text-align: center;">{{ row["name"] }}</span>
+                <p style="text-align: center;">
+                    {{ row.location }}<br><br>
+                    {{ row.stars }} ⭐<br>
+                    {{ row.distance }} miles<br>
+                    {{ row.elevation }} ft gained<br>
+                    {{ row.duration }} minutes<br>
+                    {% if row.difficulty == 1 %}
+                    Easy
+                    {% elif row.difficulty == 2 %}
+                    Moderate
+                    {% else %}
+                    Hard
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row" style="margin-bottom: 100px;">
+    {% for i, row in pop_output.iloc[5:10].iterrows() %}
+    <div class="col s2 push-s1">
+        <div class="card z-depth-2 lime lighten-4 hoverable" style="border-radius: 10px;">
+            <div class="card-content">
+                <span class="card-title" style="text-align: center;">{{ row["name"] }}</span>
+                <p style="text-align: center;">
+                    {{ row.location }}<br><br>
+                    {{ row.stars }} ⭐<br>
+                    {{ row.distance }} miles<br>
+                    {{ row.elevation }} ft gained<br>
+                    {{ row.duration }} minutes<br>
+                    {% if row.difficulty == 1 %}
+                    Easy
+                    {% elif row.difficulty == 2 %}
+                    Moderate
+                    {% else %}
+                    Hard
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
