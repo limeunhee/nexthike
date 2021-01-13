@@ -1,5 +1,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com"> 
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/materialize.min.css') }}">
 
 <style>
     body {
@@ -53,11 +54,19 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Page Title</title>
+        <title>Next Hike</title>
     </head>
     <body>
     <!-- page content -->
-    <h1>My Page</h1>
+    <nav>
+        <div class="nav-wrapper" style="background-color: #66bb6a; padding-left: 10px;">
+            <a href="#" class="brand-logo">Next Hike</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="sass.html">I have a favorite trail</a></li>
+                <li><a href="badges.html">Give me some options</a></li>
+            </ul>
+        </div>
+    </nav>
 
     <img class="bg-image" src="../static/img/bg.jpg">
     
